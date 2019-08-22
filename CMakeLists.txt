@@ -5,7 +5,7 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-project(SeetaFaceDetector)
+project(SeetaFace)
 
 # Create uninstall files
 CONFIGURE_FILE(
@@ -44,7 +44,7 @@ ENDIF()
 if(NOT BUILD_VERSION)
     SET(BUILD_VERSION "v2.5.5")
 endif()
-message("BUILD_VERSION:${BUILD_VERSION}")
+message(STATUS "== BUILD_VERSION: ${BUILD_VERSION}")
 
 IF(MSVC)
     # This option is to enable the /MP switch for Visual Studio 2005 and above compilers
@@ -88,14 +88,22 @@ set(BUILD_PLATFORM "${CMAKE_SYSTEM_NAME}")
 # ----------------------------------------------------------------------------
 # Detect compiler and target platform architecture
 # ----------------------------------------------------------------------------
-if(NOT ANDROID)
-    if(X86_64 OR CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set(PLATFORM x86_64)
-    elseif(X86 OR CMAKE_SIZEOF_VOID_P EQUAL 4)
-        set(PLATFORM x86)
+set(PLATFORM "" CACHE STRING "Set target platform, empty for x86/x86_64/amd64")
+if ("${PLATFORM}" STREQUAL "")
+    if(NOT ANDROID)
+        if(X86_64 OR CMAKE_SIZEOF_VOID_P EQUAL 8)
+            set(PLATFORM x86_64)
+        elseif(X86 OR CMAKE_SIZEOF_VOID_P EQUAL 4)
+            set(PLATFORM x86)
+        endif()
+    else()
+        set(PLATFORM ${CMAKE_ANDROID_ARCH})
     endif()
-else()
-    set(PLATFORM ${CMAKE_ANDROID_ARCH})
+endif()
+
+# For debug libs and exes, add "-d" postfix
+if(NOT DEFINED CMAKE_DEBUG_POSTFIX)
+  set(CMAKE_DEBUG_POSTFIX "-d")
 endif()
 
 add_subdirectory(SeetaNet)
@@ -119,8 +127,9 @@ endif(BUILD_EXAMPLE)
 # 设置安装前缀
 SET(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/${PROJECT_NAME}/install CACHE STRING "Install path prefix.") 
 
-message("Build detector:${BUILD_DETECOTOR}")
-message("Build landmarker:${BUILD_LANDMARKER}")
-message("Build recgnizer:${BUILD_RECOGNIZER}")
-message("Build example:${BUILD_EXAMPLE}")
-message("Build shared library:${BUILD_SHARED_LIBS}")
+message(STATUS "== Build detector: ${BUILD_DETECOTOR}")
+message(STATUS "== Build landmarker: ${BUILD_LANDMARKER}")
+message(STATUS "== Build recgnizer: ${BUILD_RECOGNIZER}")
+message(STATUS "== Build example: ${BUILD_EXAMPLE}")
+message(STATUS "== Build shared library: ${BUILD_SHARED_LIBS}")
+message(STATUS "== PLATFORM: ${PLATFORM}")

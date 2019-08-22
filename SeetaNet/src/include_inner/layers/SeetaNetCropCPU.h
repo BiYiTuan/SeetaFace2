@@ -109,7 +109,7 @@ int SeetaNetCropCPU<T>::Init( seeta::SeetaNet_LayerParameter &inputparam, SeetaN
     int start_axis = msg->axis;
     if( start_axis < 0 )
     {
-        start_axis += bottom_size_0.data_dim.size();
+        start_axis += int(bottom_size_0.data_dim.size());
     }
     start_axis_ = start_axis;
 
@@ -205,4 +205,5 @@ void SeetaNetCropCPU<Dtype>::crop_copy( const std::vector<SeetaNetFeatureMap<Dty
     }
 }
 
-#endif;
+#endif
+
